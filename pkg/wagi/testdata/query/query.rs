@@ -1,7 +1,7 @@
 use std::env;
 
 fn main() {
-    let mut who: String = String::from("world");
+    let mut who = String::from("world");
 
     let args: Vec<String> = env::args().collect();
     for arg in args {

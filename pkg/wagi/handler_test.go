@@ -1,4 +1,4 @@
-package main
+package wagi
 
 import (
 	"context"
@@ -36,6 +36,11 @@ func TestHandler(t *testing.T) {
 			path:     "./testdata/query/query.wasm",
 			query:    map[string]string{"who": "bob"},
 			out:      []byte("Hello bob"),
+		},
+		{
+			scenario: "http request",
+			path:     "./testdata/http/go.wasm",
+			function: "handle",
 		},
 	}
 

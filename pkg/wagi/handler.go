@@ -1,4 +1,4 @@
-package main
+package wagi
 
 import (
 	"bufio"
@@ -110,16 +110,17 @@ func processHeaderLine(resp http.ResponseWriter, line string) (bool, error) {
 	if len(line) == 0 {
 		return true, nil
 	}
-	split := strings.SplitAfterN(line, ":", 1)
+	split := strings.Split(line, ":")
 	if len(split) > 1 {
-		header := split[0]
+		header := strings.TrimSpace(split[0])
 		// TODO: do something with status text.
 		// TODO: handle the location header.
 		switch header {
 		case "content-type", "Content-Type":
 			resp.Header().Add("Content-Type", split[1])
 		case "status", "Status":
-			code, _ := status(header)
+			status := strings.TrimSpace(split[1])
+			code, _ := stringToStatus(status)
 			if code != -1 {
 				resp.WriteHeader(code)
 			}
@@ -128,7 +129,7 @@ func processHeaderLine(resp http.ResponseWriter, line string) (bool, error) {
 	return false, nil
 }
 
-func status(str string) (code int, text string) {
+func stringToStatus(str string) (code int, text string) {
 	status, err := strconv.Atoi(str)
 	if err != nil {
 		return -1, ""
@@ -177,6 +178,8 @@ func (h *Handler) run(function string, data []byte, config wazero.ModuleConfig) 
 
 	builder := wasi_snapshot_preview1.NewBuilder(h.runtime)
 	builder.Instantiate(h.context, namespace)
+
+	SetEnvironment(h.context, h.runtime, namespace)
 
 	// NOTE: wazero will automatically run a function called _start if exists.
 	mod, err := namespace.InstantiateModule(h.context, compiled, config)
