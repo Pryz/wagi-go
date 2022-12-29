@@ -36,5 +36,6 @@ func handle() {
 	wagihttp.Respond(&http.Response{
 		Status:     resp.Status,
 		StatusCode: resp.StatusCode,
+		Body:       resp.Body,
 	})
 }

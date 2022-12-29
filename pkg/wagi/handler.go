@@ -148,9 +148,12 @@ func loadModule(ctx context.Context, path string) ([]byte, error) {
 }
 
 func prepareConfig(stdin io.Reader, stdout io.Writer, env map[string][]string, args []string) wazero.ModuleConfig {
-	config := wazero.NewModuleConfig()
-	config = config.WithStdin(stdin)
-	config = config.WithStdout(stdout)
+	config := wazero.NewModuleConfig().
+		WithStdin(stdin).
+		WithStdout(stdout).
+		WithStderr(os.Stderr).
+		WithSysWalltime().
+		WithSysNanotime()
 
 	if env != nil {
 		for key, vals := range env {
