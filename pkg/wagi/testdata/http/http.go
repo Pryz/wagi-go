@@ -14,6 +14,7 @@ var (
 func main() {}
 
 // TODO: add the ability to return and handle error
+
 //export handle
 func handle() {
 	req, err := http.NewRequest("GET", "https://httpbin.org/get", nil)
@@ -26,16 +27,23 @@ func handle() {
 	var resp *http.Response
 
 	client := http.Client{
-		Transport: &wagihttp.Transport{},
+		Transport: &wagihttp.Transport{
+			Logger: log,
+		},
 	}
 	resp, err = client.Do(req)
 	if err != nil {
 		log.Fatalf("failed http request: %s", err)
 	}
 
-	wagihttp.Respond(&http.Response{
-		Status:     resp.Status,
-		StatusCode: resp.StatusCode,
-		Body:       resp.Body,
-	})
+	if resp == nil {
+		log.Println("HTTP reponse is nil")
+	} else {
+		log.Printf("http reponse %v", resp.Status)
+	}
+
+	//wagihttp.Respond(&http.Response{
+	//Status:     resp.Status,
+	//StatusCode: resp.StatusCode,
+	//})
 }

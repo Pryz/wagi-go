@@ -199,7 +199,7 @@ func (h *Handler) run(function string, data []byte, config wazero.ModuleConfig) 
 		}
 		_, err = fn.Call(h.context)
 		if err != nil {
-			return fmt.Errorf("call main: %s", err)
+			return fmt.Errorf("call function %s: %s", function, err)
 		}
 	}
 
