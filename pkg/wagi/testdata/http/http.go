@@ -8,12 +8,19 @@ import (
 )
 
 var (
-	log = wagilog.NewLogger(nil)
+	log    = wagilog.NewLogger(nil)
+	client = http.DefaultClient
 )
 
 // Main is required by wazero (tinygo ?) since it will be executed
 // as __start.
-func main() {}
+func main() {
+	client = &http.Client{
+		Transport: &wagihttp.Transport{
+			Logger: log,
+		},
+	}
+}
 
 // TODO: how to instrument errors ? via logs or events ?
 // TODO: split host and module logging streams
@@ -32,12 +39,6 @@ func handle() {
 	}
 
 	var resp *http.Response
-
-	client := http.Client{
-		Transport: &wagihttp.Transport{
-			Logger: log,
-		},
-	}
 	resp, err = client.Do(req)
 	if err != nil {
 		log.Fatalf("failed http request: %s", err)
