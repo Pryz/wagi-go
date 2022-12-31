@@ -11,9 +11,18 @@ var (
 	log = wagilog.NewLogger(nil)
 )
 
+// Main is required by wazero (tinygo ?) since it will be executed
+// as __start.
 func main() {}
 
-// TODO: add the ability to return and handle error
+// TODO: how to instrument errors ? via logs or events ?
+// TODO: split host and module logging streams
+// TODO: add tracer to http transport. should we use stderr ?
+// TODO: finish body reader impl
+
+// `handle` use the wagihttp.Transport to leverage the host for
+// an HTTP request. The host only process the request and forward
+// the HTTP response to the module.
 
 //export handle
 func handle() {
@@ -21,8 +30,6 @@ func handle() {
 	if err != nil {
 		log.Fatalf("failed to create http request: %s", err)
 	}
-
-	log.Printf("url: %s", req.URL)
 
 	var resp *http.Response
 
@@ -36,14 +43,8 @@ func handle() {
 		log.Fatalf("failed http request: %s", err)
 	}
 
-	if resp == nil {
-		log.Println("HTTP reponse is nil")
-	} else {
-		log.Printf("http reponse %v", resp.Status)
-	}
-
-	//wagihttp.Respond(&http.Response{
-	//Status:     resp.Status,
-	//StatusCode: resp.StatusCode,
-	//})
+	wagihttp.Respond(&http.Response{
+		Status:     resp.Status,
+		StatusCode: resp.StatusCode,
+	})
 }

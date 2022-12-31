@@ -29,13 +29,15 @@ func Respond(resp *http.Response) {
 	// TODO: catch writer errors
 	writer.WriteString(s)
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		// FIXME
-		return
-	}
-	resp.Body.Close()
+	if resp.Body != nil {
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			// FIXME
+			return
+		}
+		resp.Body.Close()
 
-	// TODO: catch writer errors
-	writer.Write(data)
+		// TODO: catch writer errors
+		writer.Write(data)
+	}
 }
